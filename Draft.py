@@ -18,7 +18,6 @@ def Job_offers_by_skill(module_name,country) :
     else :
         prefix =""
     URL = f"https://{prefix}indeed.com/jobs?q={module_name}&l={country}"
-    print(URL)
     # Get the HTML string from URL :
     HTML = requests.get(URL).text
     # Turn it into a BeautifulSoup string :
@@ -44,5 +43,30 @@ def Job_offers_by_skill(module_name,country) :
 
 
 
-def Data_collection(file_of_skills) :
-    with open()
+
+def Data_collection(Directory_of_modules_file) :
+    with open(Directory_of_modules_file , "r") as f :
+        List = f.read().splitlines()
+        dataframe = pd.DataFrame()
+        for country in ["maroc","france","USA"] :
+            data_by_country = []
+            for module in List :
+                data_by_country.append(Job_offers_by_skill(module,country))
+            dataframe[country] = data_by_country
+        dataframe.index = List
+        return dataframe
+dataframe = Data_collection("modules.txt")       
+dataframe.to_csv('DataBase.csv', encoding='utf-8')
+
+
+
+
+
+
+def plottings(csv_directory) :
+    database = pd.read_csv(csv_directory , index_col=0)
+    database["maroc"].plot.bar()
+    plt.title("Most in demand programming languages/packages in Morocco")
+    plt.ylabel("Number of job offers in Indeed")
+    print(database.head())
+plottings("DataBase.csv")
